@@ -3,6 +3,14 @@
     "name": "dispensador",
     "slug": "dispensador",
     "version": "1.0.0",
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
     "sdkVersion": "44.0.0",
     "platforms": [
       "ios",

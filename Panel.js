@@ -13,7 +13,7 @@ import {
 import LottieView from "lottie-react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { NavigationContainer } from "@react-navigation/native";
-import Perfil from "./Perfil";
+import Mascota from "./Mascota";
 import Home from "./Home";
 const auth = Firebase.auth();
 
@@ -27,10 +27,10 @@ function MyTabs() {
 
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "Perfil") {
+          } else if (route.name === "Mascota") {
             iconName = focused
-              ? "md-person-circle"
-              : "md-person-circle-outline";
+              ? "paw"
+              : "paw-outline";
           }
 
           // You can return any component that you like here!
@@ -50,7 +50,7 @@ function MyTabs() {
       })}
     >
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Perfil" component={Perfil} />
+      <Tab.Screen name="Mascota" component={Mascota} />
     </Tab.Navigator>
   );
 }

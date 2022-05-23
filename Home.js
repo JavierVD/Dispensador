@@ -4,7 +4,7 @@ import AndroidOpenSettings from 'react-native-android-open-settings';
 import RNBluetoothClassic, {
   BluetoothDevice,
 } from "react-native-bluetooth-classic";
-import BluetoothSerial from "react-native-bluetooth-serial-next";
+import BluetoothSerial, { disable } from "react-native-bluetooth-serial-next";
 import Firebase from "./firebase";
 import { getDatabase, ref, onValue, get } from "firebase/database";
 import {
@@ -18,8 +18,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { NavigationContainer } from "@react-navigation/native";
-import Perfil from "./Perfil";
 const auth = Firebase.auth();
 
 export default class Home extends React.Component {
@@ -27,6 +25,7 @@ export default class Home extends React.Component {
     super(props);
     this.state = {
       username: "",
+      disable: true,
       status: "🔄️ Buscando dispositivo",
       foodlevel: "Vacío",
       connectionOptions: {
@@ -52,31 +51,37 @@ export default class Home extends React.Component {
       console.log("Error: " + error.message);
     }
   };
+  continueDiscovery = async () =>{
+    const isConnected = await BluetoothSerial.isConnected();
+    this.setState({
+      bluetoothColor: "rgba(27, 255, 20,1.0)",
+      status: "🔄️ Buscando dispositivo",
+    });
+    if (isConnected) {
+      this.setState({ status: "🟢 Conectado" });
+    } else {
+      const devices = await BluetoothSerial.listUnpaired();
+      console.log("Buscando---");
+      devices.forEach((element) => {
+        console.log(element.id);
+        if (element.id == "00:18:E4:40:00:06") {
+          this.setState({
+            status: "🟡 Conectando...",
+            MAC_ADDRESS: element.id,
+          });
+          console.log("get id " + this.state.MAC_ADDRESS);
+          this.connect();
+        }
+      });
+    }
+  }
+
   startDiscovery = async () => {
     try {
       const isEnabled = await BluetoothSerial.isEnabled();
-      const isConnected = await BluetoothSerial.isConnected();
+      console.log("show enable:" + isEnabled);
       if (isEnabled) {
-        this.setState({
-          bluetoothColor: "rgba(27, 255, 20,1.0)",
-          status: "🔄️ Buscando dispositivo",
-        });
-        if (isConnected) {
-          this.setState({ status: "🟢 Conectado" });
-        } else {
-          const devices = await BluetoothSerial.listUnpaired();
-          devices.forEach((element) => {
-            console.log(element.id);
-            if (element.id == "00:18:E4:40:00:06") {
-              this.setState({
-                status: "🟡 Conectando...",
-                MAC_ADDRESS: element.id,
-              });
-              console.log("get id " + this.state.MAC_ADDRESS);
-              this.connect();
-            }
-          });
-        }
+        this.continueDiscovery();
       } else {
         this.setState({
           bluetoothColor: "rgba(255,255,255,1.0)",
@@ -98,15 +103,31 @@ export default class Home extends React.Component {
       .ref("usuarios/" + uid)
       .once("value", (snapshot) => {
         const rec = snapshot.val();
-        this.setState({
-          username: rec.username,
-        });
+        if(rec != null){
+          this.setState({
+            username: rec.username,
+          });
+        }
+
       });
+      Firebase.database()
+      .ref("mascotas/" + uid)
+      .once("value", (snapshot) => {
+        const rec = snapshot.val();
+        if(rec == null){
+          this.setState({
+            disable: false
+          });
+        }
+
+      });
+    
     this.startDiscovery();
   }
 
   deshabilitarBT = async () => {
     const isEnabled = await BluetoothSerial.isEnabled();
+    console.log(isEnabled);
     if (isEnabled) {
       await BluetoothSerial.disable();
       this.setState({
@@ -120,10 +141,11 @@ export default class Home extends React.Component {
         estadoBT: "Bluetooth encendido",
         bluetoothColor: "rgba(27, 255, 20,1.0)",
       });
-      this.startDiscovery;
+      this.continueDiscovery();
     }
   };
   render() {
+    const {navigate} = this.props.navigation;  
     return (
       <View style={styles.container}>
         <Image
@@ -178,6 +200,8 @@ export default class Home extends React.Component {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
+        isEnabled={this.state.disable}
+        onPress={()=>navigate("Dispensador")}
           style={{
             backgroundColor: "rgba(0,0,0,0.1)",
             alignItems: "center",

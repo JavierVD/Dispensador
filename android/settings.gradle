@@ -1,4 +1,6 @@
 rootProject.name = 'dispensador'
+include ':react-native-bluetooth-serial-next'
+project(':react-native-bluetooth-serial-next').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-bluetooth-serial-next/android')
 include ':react-native-android-open-settings'
 project(':react-native-android-open-settings').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-android-open-settings/android')
 include ':react-native-bluetooth-serial-next'

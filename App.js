@@ -6,6 +6,7 @@ import Registro from './Registro';
 import Panel from './Panel'
 import Perfil from './Perfil';
 import Home from './Home';
+import Dispensador from './Dispensador';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,8 @@ export default function Navigation() {
         <Stack.Screen name="Panel" component={Panel} />
         <Stack.Screen name="Perfil" component={Perfil} />
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Dispensador" component={Dispensador} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

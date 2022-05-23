@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.nuttawutmalee.RCTBluetoothSerial.RCTBluetoothSerialPackage;
 import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage;
 import com.nuttawutmalee.RCTBluetoothSerial.RCTBluetoothSerialPackage;
 import com.polidea.reactnativeble.BlePackage;
